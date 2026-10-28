@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mhbas.mapper.GoalMapper">
+    <select id="findByUser" resultType="Goal">
+        SELECT * FROM goal
+        WHERE user_id = #{userId}
+        ORDER BY enabled DESC, created_at ASC
+    </select>
+
+    <select id="findByIdAndUser" resultType="Goal">
+        SELECT * FROM goal WHERE id = #{id} AND user_id = #{userId}
+    </select>
+
+    <select id="findActiveByUserAndType" resultType="Goal">
+        SELECT * FROM goal
+        WHERE user_id = #{userId}
+          AND goal_type = #{goalType}
+          AND enabled = 1
+        ORDER BY created_at DESC, id DESC
+        LIMIT 1
+    </select>
+
+    <select id="findDuplicate" resultType="Goal">
+        SELECT * FROM goal
+        WHERE user_id = #{userId}
+          AND goal_type = #{goalType}
+          AND target_value = #{targetValue}
+          AND period = #{period}
+        LIMIT 1
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO goal (user_id, goal_type, goal_name, target_value, unit, period, enabled)
+        VALUES (#{userId}, #{goalType}, #{goalName}, #{targetValue}, #{unit}, #{period}, #{enabled})
+    </insert>
+
+    <update id="updateEnabled">
+        UPDATE goal SET enabled = #{enabled} WHERE id = #{id} AND user_id = #{userId}
+    </update>
+
+    <delete id="deleteByIdAndUser">
+        DELETE FROM goal WHERE id = #{id} AND user_id = #{userId}
+    </delete>
+</mapper>

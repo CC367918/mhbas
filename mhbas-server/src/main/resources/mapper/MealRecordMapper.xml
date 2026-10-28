@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mhbas.mapper.MealRecordMapper">
+    <select id="findByUserAndRecordDateBetween" resultType="MealRecord">
+        SELECT * FROM meal_record
+        WHERE user_id = #{userId}
+          AND record_date BETWEEN #{from} AND #{to}
+        ORDER BY record_date DESC,
+                 CASE meal_type WHEN '早餐' THEN 1 WHEN '午餐' THEN 2 ELSE 3 END
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO meal_record (user_id, record_date, meal_type)
+        VALUES (#{userId}, #{recordDate}, #{mealType})
+    </insert>
+
+    <delete id="deleteByIdAndUser">
+        DELETE FROM meal_record WHERE id = #{id} AND user_id = #{userId}
+    </delete>
+
+    <select id="getMeal" resultType="MealRecord">
+        SELECT * FROM meal_record
+        WHERE user_id = #{userId}
+          AND record_date = #{recordDate}
+          AND meal_type = #{mealType}
+    </select>
+</mapper>

@@ -1,0 +1,11 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="MHBAS Server" type="SpringBootApplicationConfigurationType"
+                 factoryName="Spring Boot" nameIsGenerated="true">
+    <module name="mhbas-server" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.mhbas.MhbasApplication" />
+    <option name="VM_PARAMETERS" value="-Dfile.encoding=UTF-8" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

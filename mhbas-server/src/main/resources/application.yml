@@ -1,0 +1,50 @@
+#主配置
+spring:
+  application:
+    name: MHBAS
+  profiles:
+      active: dev
+
+  servlet:
+    encoding:
+      charset: UTF-8
+      force: true
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 6MB
+  datasource:
+    url: ${spring.datasource.url}
+    username: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    driver-class-name: ${spring.datasource.driver-class-name}
+  sql:
+    init:
+      mode: ${spring.sql.init.mode}
+      schema-locations: ${spring.sql.init.schema-locations}
+      continue-on-error: ${spring.sql.init.continue-on-error}
+
+server:
+  port: 8080
+
+logging:
+  charset:
+    console: UTF-8
+    file: UTF-8
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.mhbas.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+jwt:
+  secret: ${JWT_SECRET:mhbas-local-development-secret-key-change-me-2026}
+  expiration: ${JWT_EXPIRATION:86400000}
+
+aliyun:
+  oss:
+    endpoint: ${spring.aliyun.oss.endpoint}
+    access-key-id: ${spring.aliyun.oss.access-key-id}
+    access-key-secret: ${spring.aliyun.oss.access-key-secret}
+    bucket-name: ${spring.aliyun.oss.bucket-name}
+    public-base-url: ${aliyun.oss.public-base-url}

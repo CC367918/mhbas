@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mhbas.mapper.UserMapper">
+    <select id="findByUsername" resultType="User">
+        SELECT * FROM user WHERE username = #{username} LIMIT 1
+    </select>
+
+    <select id="findById" resultType="User">
+        SELECT * FROM user WHERE id = #{id}
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO user (username, password, nickname, avatar_url)
+        VALUES (#{username}, #{password}, #{nickname}, #{avatarUrl})
+    </insert>
+
+    <update id="updateProfile">
+        UPDATE user SET nickname = #{nickname} WHERE id = #{id}
+    </update>
+
+    <update id="updateAvatar">
+        UPDATE user SET avatar_url = #{avatarUrl} WHERE id = #{id}
+    </update>
+
+    <update id="updatePassword">
+        UPDATE user SET password = #{password} WHERE id = #{id}
+    </update>
+
+    <update id="updateWxOpenid">
+        UPDATE user SET wx_openid = #{wxOpenid} WHERE id = #{id}
+    </update>
+</mapper>

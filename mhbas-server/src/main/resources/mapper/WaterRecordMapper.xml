@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mhbas.mapper.WaterRecordMapper">
+    <select id="findByUserAndRecordDateBetween" resultType="WaterRecord">
+        SELECT * FROM water_record
+        WHERE user_id = #{userId} AND record_date BETWEEN #{from} AND #{to}
+        ORDER BY record_date DESC, water_time DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO water_record (user_id, record_date, water_time, amount_ml)
+        VALUES (#{userId}, #{recordDate}, #{waterTime}, #{amountMl})
+    </insert>
+
+    <delete id="deleteByIdAndUser">
+        DELETE FROM water_record WHERE id = #{id} AND user_id = #{userId}
+    </delete>
+</mapper>

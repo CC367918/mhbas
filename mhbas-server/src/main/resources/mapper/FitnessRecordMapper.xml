@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mhbas.mapper.FitnessRecordMapper">
+    <select id="findByUserAndStartTimeBetween" resultType="FitnessRecord">
+        SELECT * FROM fitness_record
+        WHERE user_id = #{userId}
+          AND start_time &gt;= #{from}
+          AND start_time &lt; #{to}
+        ORDER BY start_time DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO fitness_record
+            (user_id, fitness_type, start_time, duration_minutes, calories, intensity, note)
+        VALUES
+            (#{userId}, #{fitnessType}, #{startTime}, #{durationMinutes}, #{calories}, #{intensity}, #{note})
+    </insert>
+
+    <delete id="deleteByIdAndUser">
+        DELETE FROM fitness_record WHERE id = #{id} AND user_id = #{userId}
+    </delete>
+</mapper>

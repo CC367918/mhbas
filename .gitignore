@@ -1,0 +1,32 @@
+# ===== 构建产物 =====
+target/
+build/
+out/
+*.class
+
+# ===== IDE（IDEA / Eclipse / VSCode）=====
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.classpath
+.project
+
+# ===== 日志与临时文件 =====
+logs/
+*.log
+*.tmp
+uploads/
+
+# ===== 系统文件 =====
+Thumbs.db
+.DS_Store
+
+# ===== 敏感配置（含 OSS AK/SK、数据库密码）=====
+mhbas-server/src/main/resources/application-dev.yml
+application-local.yml
+start-backend.ps1
+README.md
+schema.sql

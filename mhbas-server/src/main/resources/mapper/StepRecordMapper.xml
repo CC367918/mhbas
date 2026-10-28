@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mhbas.mapper.StepRecordMapper">
+    <select id="findByUserAndDate" resultType="StepRecord">
+        SELECT * FROM step_record
+        WHERE user_id = #{userId} AND record_date = #{recordDate}
+        LIMIT 1
+    </select>
+
+    <select id="findByUserIdBetween" resultType="StepRecord">
+        SELECT * FROM step_record
+        WHERE user_id = #{userId}
+          AND record_date BETWEEN #{from} AND #{to}
+        ORDER BY record_date DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO step_record (user_id, record_date, steps)
+        VALUES (#{userId}, #{recordDate}, #{steps})
+    </insert>
+
+    <update id="updateSteps">
+        UPDATE step_record
+        SET steps = #{steps}
+        WHERE id = #{id} AND user_id = #{userId}
+    </update>
+
+    <delete id="deleteByIdAndUser">
+        DELETE FROM step_record WHERE id = #{id} AND user_id = #{userId}
+    </delete>
+</mapper>

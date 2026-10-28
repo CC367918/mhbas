@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mhbas.mapper.SleepRecordMapper">
+    <select id="findByUserAndRecordDateBetween" resultType="SleepRecord">
+        SELECT * FROM sleep_record
+        WHERE user_id = #{userId} AND record_date BETWEEN #{from} AND #{to}
+        ORDER BY record_date DESC, sleep_time DESC
+    </select>
+
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sleep_record (user_id, record_date, sleep_time, wake_time, duration_minutes, subjective_status)
+        VALUES (#{userId}, #{recordDate}, #{sleepTime}, #{wakeTime}, #{durationMinutes}, #{subjectiveStatus})
+    </insert>
+
+    <delete id="deleteByIdAndUser">
+        DELETE FROM sleep_record WHERE id = #{id} AND user_id = #{userId}
+    </delete>
+</mapper>
