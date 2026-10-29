@@ -32,6 +32,10 @@ public class UserController {
         this.fileStorageService = fileStorageService;
     }
 
+    /**
+     * 获取当前用户信息
+     * @return
+     */
     @GetMapping("/me")
     public Result<UserVO.Detail> me() {
         UserVO.Detail detail=authService.me(BaseContext.requireCurrentId());

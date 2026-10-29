@@ -17,29 +17,26 @@ import java.util.Map;
 public class JwtUtil {
     /**
      * 生成jwt
-     * 使用Hs256算法, 私匙使用固定秘钥
-     *
-     * @param secretKey jwt秘钥
-     * @param expirationMillis jwt过期时间(毫秒)
-     * @param userId    用户ID
+     * @param secretKey
+     * @param expirationMillis
+     * @param claims
      * @return
      */
-    public static String createJWT(String secretKey, Long expirationMillis, Long userId) {
-        SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-        Date now = new Date();
+    public static String createJWT(String secretKey, Long expirationMillis, Map<String, Object> claims) {
+        SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));     // 动态生成密钥
+        Date expiration = new Date(System.currentTimeMillis() + expirationMillis);
         return Jwts.builder()
-                .subject(userId.toString())
-                .issuedAt(now)
-                .expiration(new Date(System.currentTimeMillis() + expirationMillis))
-                // 与 parseJWT 使用同一密钥，算法由密钥长度决定，保证签验一致
-                .signWith(key)
+                .claims(claims)
+                .issuedAt(new Date())
+                .expiration(expiration)
+                .signWith(key)          // 与 parseJWT 使用同一密钥，算法由密钥长度决定，保证签验一致
                 .compact();
     }
+
     /**
      * Token解密
-     *
-     * @param secretKey jwt秘钥 此秘钥一定要保留好在服务端, 不能暴露出去, 否则sign就可以被伪造, 如果对接多个客户端建议改造成多个
-     * @param token     加密后的token
+     * @param secretKey jwt秘钥
+     * @param token jwt令牌
      * @return
      */
     public static Claims parseJWT(String secretKey, String token) {
@@ -50,5 +47,4 @@ public class JwtUtil {
                 .parseSignedClaims(token)
                 .getPayload();
     }
-
 }

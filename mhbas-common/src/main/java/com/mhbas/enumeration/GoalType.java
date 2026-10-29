@@ -11,11 +11,11 @@ public enum GoalType {
     MEAL_COUNT("MEAL_COUNT", "每日规律三餐", "餐", "DAY", 3),
     STEPS_DAILY("STEPS_DAILY", "每日步数", "步", "DAY", 8000);
 
-    private final String code;
-    private final String displayName;
-    private final String unit;
-    private final String period;
-    private final double suggestedTarget;
+    private final String code;          // 编码
+    private final String displayName;   // 显示名称
+    private final String unit;          // 单位
+    private final String period;        // 周期
+    private final double suggestedTarget; // 建议目标值
 
     GoalType(String code, String displayName, String unit, String period, double suggestedTarget) {
         this.code = code;
@@ -44,7 +44,7 @@ public enum GoalType {
     public double getSuggestedTarget() {
         return suggestedTarget;
     }
-
+    // 根据编码获取枚举
     public static Optional<GoalType> fromCode(String code) {
         return Arrays.stream(values()).filter(type -> type.code.equals(code)).findFirst();
     }

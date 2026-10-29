@@ -20,7 +20,7 @@ public final class UserVO {
     }
 
     // 登录结果
-    public record Login(String token, Detail user) {
+    public record Login(String token, Detail detail) {
     }
 
     // 头像信息

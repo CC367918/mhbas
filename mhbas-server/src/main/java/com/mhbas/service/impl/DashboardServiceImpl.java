@@ -57,10 +57,15 @@ public class DashboardServiceImpl implements DashboardService {
         this.analysisService = analysisService;
     }
 
+    /**
+     * 获取仪表盘概览数据
+     * @param userId
+     * @return
+     */
     public DashboardVO.Overview dashboard(Long userId) {
         LocalDate today = LocalDate.now();
         LocalDate from = today.minusDays(6);
-
+        // 获取最近7天的数据
         List<SleepRecord> sleepRecords = sleepRecordMapper.findByUserAndRecordDateBetween(userId, from, today);
         List<FitnessRecord> fitnessRecords = fitnessRecordMapper.findByUserAndStartTimeBetween(
                 userId, from.atStartOfDay(), today.plusDays(1).atStartOfDay()
@@ -70,17 +75,18 @@ public class DashboardServiceImpl implements DashboardService {
         List<MealRecord> mealRecords = mealRecordMapper.findByUserAndRecordDateBetween(userId, from, today);
 
         Map<LocalDate, Integer> sleepDaily = new HashMap<>();
-        sleepRecords.forEach(record -> sleepDaily.merge(record.getRecordDate(),
-                value(record.getDurationMinutes()), Integer::sum));
+        sleepRecords.forEach(record ->
+                sleepDaily.merge(record.getRecordDate(), value(record.getDurationMinutes()), Integer::sum));
         Map<LocalDate, Integer> fitnessDaily = new HashMap<>();
-        fitnessRecords.forEach(record -> fitnessDaily.merge(record.getStartTime().toLocalDate(),
-                value(record.getDurationMinutes()), Integer::sum));
+        fitnessRecords.forEach(record ->
+                fitnessDaily.merge(record.getStartTime().toLocalDate(), value(record.getDurationMinutes()), Integer::sum));
         Map<LocalDate, Integer> stepDaily = stepService.dailyMap(stepRecords);
         Map<LocalDate, Integer> waterDaily = new HashMap<>();
-        waterRecords.forEach(record -> waterDaily.merge(record.getRecordDate(),
-                value(record.getAmountMl()), Integer::sum));
+        waterRecords.forEach(record ->
+                waterDaily.merge(record.getRecordDate(), value(record.getAmountMl()), Integer::sum));
         Map<LocalDate, Integer> mealDaily = new HashMap<>();
-        mealRecords.forEach(record -> mealDaily.merge(record.getRecordDate(), 1, Integer::sum));
+        mealRecords.forEach(record ->
+                mealDaily.merge(record.getRecordDate(), 1, Integer::sum));
 
         List<String> labels = new ArrayList<>();
         List<Integer> sleepSeries = new ArrayList<>();

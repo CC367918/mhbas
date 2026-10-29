@@ -25,8 +25,6 @@ public final class UserDTO {
     ) {
     }
 
-
-
     public record UpdateProfile(
             @Size(max = 50, message = "昵称不能超过 50 个字符") String nickname
     ) {

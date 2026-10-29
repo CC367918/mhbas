@@ -28,6 +28,15 @@ public final class RecordVO {
     public record StepOverview(List<StepRecord> records, StepStats stats) {
     }
 
+    /**
+     * 健身界面信息
+     * @param weekCount
+     * @param weekMinutes
+     * @param weekCalories
+     * @param trendLabels
+     * @param trendValues
+     * @param maxTrend
+     */
     public record FitnessStats(
             int weekCount,
             int weekMinutes,

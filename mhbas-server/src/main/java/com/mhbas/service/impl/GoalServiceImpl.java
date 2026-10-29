@@ -38,6 +38,23 @@ public class GoalServiceImpl implements GoalService {
         this.stepService = stepService;
     }
 
+    private record CurrentValues(RecordVO.FitnessStats fitness, double sleepHours, int waterMl, int mealCount, int steps) {}
+
+    /**
+     * 获取用户所有目标的详情，包含进度
+     * @param userId
+     * @return
+     */
+    public List<GoalVO.Detail> listWithProgress(Long userId) {
+        List<Goal> goals = goalMapper.findByUser(userId);
+        CurrentValues current = currentValues(userId);
+        return goals.stream().map(goal -> toView(goal, current)).toList();
+    }
+
+    /**
+     * 获取目标类型选项
+     * @return
+     */
     public List<GoalVO.TypeOption> typeOptions() {
         return Arrays.stream(GoalType.values())
                 .map(type -> new GoalVO.TypeOption(
@@ -49,6 +66,12 @@ public class GoalServiceImpl implements GoalService {
                 ))
                 .toList();
     }
+    /**
+     * 添加目标
+     * @param userId
+     * @param request
+     * @return
+     */
 
     @Transactional
     public GoalVO.Detail add(Long userId, GoalDTO.Create request) {
@@ -60,14 +83,15 @@ public class GoalServiceImpl implements GoalService {
         if (duplicate != null) {
             throw new BusinessException(409, "相同的健康目标已存在，请直接启用或修改原目标");
         }
-        Goal goal = new Goal();
-        goal.setUserId(userId);
-        goal.setGoalType(meta.getCode());
-        goal.setGoalName(meta.getDisplayName());
-        goal.setTargetValue(request.targetValue());
-        goal.setUnit(meta.getUnit());
-        goal.setPeriod(meta.getPeriod());
-        goal.setEnabled(true);
+        Goal goal = Goal.builder()
+                .userId(userId)
+                .goalType(meta.getCode())
+                .goalName(meta.getDisplayName())
+                .targetValue(request.targetValue())
+                .unit(meta.getUnit())
+                .period(meta.getPeriod())
+                .enabled(true)
+                .build();
         try {
             goalMapper.insert(goal);
         } catch (DuplicateKeyException exception) {
@@ -75,12 +99,11 @@ public class GoalServiceImpl implements GoalService {
         }
         return toView(goalMapper.findByIdAndUser(goal.getId(), userId), currentValues(userId));
     }
-
-    public List<GoalVO.Detail> listWithProgress(Long userId) {
-        List<Goal> goals = goalMapper.findByUser(userId);
-        CurrentValues current = currentValues(userId);
-        return goals.stream().map(goal -> toView(goal, current)).toList();
-    }
+    /**
+     * 切换目标状态
+     * @param userId
+     * @param id
+     */
 
     @Transactional
     public void toggle(Long userId, Long id) {
@@ -90,13 +113,17 @@ public class GoalServiceImpl implements GoalService {
         }
         goalMapper.updateEnabled(id, userId, !Boolean.TRUE.equals(goal.getEnabled()));
     }
-
+    /**
+     * 删除目标
+     * @param userId
+     * @param id
+     */
     public void delete(Long userId, Long id) {
         if (goalMapper.deleteByIdAndUser(id, userId) == 0) {
             throw new BusinessException(404, "目标不存在");
         }
     }
-
+    //将实体类转换为视图对象
     private GoalVO.Detail toView(Goal goal, CurrentValues current) {
         if (goal == null) {
             throw new BusinessException(404, "目标不存在");
@@ -135,9 +162,5 @@ public class GoalServiceImpl implements GoalService {
                 mealService.todayCount(userId),
                 stepService.todaySteps(userId)
         );
-    }
-
-    private record CurrentValues(RecordVO.FitnessStats fitness, double sleepHours, int waterMl, int mealCount, int steps) {
-
     }
 }

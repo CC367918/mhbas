@@ -9,10 +9,12 @@ public final class BaseContext {
         threadLocal.set(userId);
     }
 
+    /** 可能为 null：业务入口使用，缺失则默认当前用户无权限 */
     public static Long getCurrentId() {
         return threadLocal.get();
     }
 
+    /** 必定非 null：业务入口使用，缺失即 401 */
     public static Long requireCurrentId() {
         Long userId = getCurrentId();
         if (userId == null) {
@@ -21,6 +23,7 @@ public final class BaseContext {
         return userId;
     }
 
+    /** 移除当前用户：业务出口使用 */
     public static void removeCurrentId() {
         threadLocal.remove();
     }

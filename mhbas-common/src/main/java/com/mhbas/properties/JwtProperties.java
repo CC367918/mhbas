@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "jwt")
 public class JwtProperties {
-    private String secret;      // 密钥
+    private String secretKey;      // 密钥
     private long expiration;    // 过期时间
+    private String tokenName;   // 令牌名称
 }

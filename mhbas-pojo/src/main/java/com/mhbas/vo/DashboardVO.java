@@ -18,6 +18,15 @@ public final class DashboardVO {
     ) {
     }
 
+    /**
+     *
+     * @param labels
+     * @param sleep
+     * @param fitness
+     * @param steps
+     * @param water
+     * @param meal
+     */
     public record Trend7(
             List<String> labels,
             List<Integer> sleep,

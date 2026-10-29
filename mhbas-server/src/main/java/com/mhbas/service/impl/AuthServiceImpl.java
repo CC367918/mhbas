@@ -16,10 +16,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 public class AuthServiceImpl implements AuthService {
     private final UserMapper userMapper;
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final BCryptPasswordEncoder passwordEncoder;    // 密码加密工具
     private final AliOssUtil aliOssUtil;
     private final JwtProperties jwtProperties;
 
@@ -51,14 +54,17 @@ public class AuthServiceImpl implements AuthService {
         return UserVO.Detail.from(userMapper.findByUsername(username), aliOssUtil.createSignedUrl(user.getAvatarUrl()));
     }
 
-
     public UserVO.Login login(UserDTO.Login request) {
         User user = userMapper.findByUsername(request.username().trim());
         if (user == null || !passwordEncoder.matches(request.password(), user.getPassword())) {
             throw new BusinessException(401, "用户名或密码错误");
         }
-        return new UserVO.Login( JwtUtil.createJWT(jwtProperties.getSecret(), jwtProperties.getExpiration(), user.getId()),
-                UserVO.Detail.from(user, aliOssUtil.createSignedUrl(user.getAvatarUrl())) );
+
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId" , user.getId());
+        String jwt = JwtUtil.createJWT(jwtProperties.getSecretKey(), jwtProperties.getExpiration(), claims);
+        UserVO.Detail detail = UserVO.Detail.from(user, aliOssUtil.createSignedUrl(user.getAvatarUrl()));
+        return new UserVO.Login(jwt, detail);
     }
 
     public UserVO.Detail me(Long userId) {
