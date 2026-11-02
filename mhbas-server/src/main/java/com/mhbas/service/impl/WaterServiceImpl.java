@@ -1,10 +1,13 @@
 package com.mhbas.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.mhbas.service.WaterService;
 
 import com.mhbas.exception.BusinessException;
 import com.mhbas.constant.HealthConstant;
 import com.mhbas.dto.RecordDTO;
+import com.mhbas.result.PageResult;
 import com.mhbas.vo.RecordVO;
 import com.mhbas.entity.Goal;
 import com.mhbas.entity.WaterRecord;
@@ -59,10 +62,9 @@ public class WaterServiceImpl implements WaterService {
         Integer achievementRate = targetMl == null || targetMl <= 0
                 ? null : Math.min(100, (int) Math.round(todayMl * 100.0 / targetMl));
 
-        RecordVO.WaterStats stats = new RecordVO.WaterStats(
+        return new RecordVO.WaterOverview(
                 todayMl, weekMl, targetMl, achievementRate, labels, values
         );
-        return new RecordVO.WaterOverview(records, stats);
     }
 
     public int todayMl(Long userId) {
@@ -79,6 +81,21 @@ public class WaterServiceImpl implements WaterService {
                 .mapToInt(record -> record.getAmountMl() == null ? 0 : record.getAmountMl())
                 .sum();
     }
+
+    @Override
+    public PageResult page(Long userId, int page, int pageSize, LocalDate begin, LocalDate end) {
+        int pageNum = Math.max(page, 1);
+        int size = pageSize < 1 ? 10 : Math.min(pageSize, 100);
+        if (begin != null && end != null && begin.isAfter(end)) {
+            LocalDate temp = begin;
+            begin = end;
+            end = temp;
+        }
+        PageHelper.startPage(pageNum, size);
+        Page<WaterRecord> records = waterRecordMapper.pageQuery(userId, begin, end);
+        return new PageResult(records.getTotal(), records.getResult());
+    }
+
     //获得每日饮水总量 （时间，总饮水量）
     private Map<LocalDate, Integer> dailyMap(List<WaterRecord> records) {
         Map<LocalDate, Integer> daily = new HashMap<>();

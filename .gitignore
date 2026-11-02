@@ -4,7 +4,7 @@ build/
 out/
 *.class
 
-# ===== IDE（IDEA / Eclipse / VSCode）=====
+# ===== IDE（IDEA ， VSCode）=====
 .idea/
 *.iml
 *.ipr
@@ -25,8 +25,17 @@ Thumbs.db
 .DS_Store
 
 # ===== 敏感配置（含 OSS AK/SK、数据库密码）=====
-mhbas-server/src/main/resources/application-dev.yml
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
 application-local.yml
-start-backend.ps1
-README.md
-schema.sql
+application-*-local.yml
+
+docs/
+*.README.md

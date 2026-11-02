@@ -1,9 +1,12 @@
 package com.mhbas.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.mhbas.service.SleepService;
 
 import com.mhbas.exception.BusinessException;
 import com.mhbas.dto.RecordDTO;
+import com.mhbas.result.PageResult;
 import com.mhbas.vo.RecordVO;
 import com.mhbas.entity.SleepRecord;
 import com.mhbas.mapper.SleepRecordMapper;
@@ -117,7 +120,7 @@ public class SleepServiceImpl implements SleepService {
             trendValues.add(Precision.round(daily.getOrDefault(date, 0) / 60.0,1));
         }
 
-        RecordVO.SleepStats stats = new RecordVO.SleepStats(
+        return new RecordVO.SleepOverview(
                 Precision.round(averageHours, 1),
                 fluctuation,
                 regularity,
@@ -125,7 +128,6 @@ public class SleepServiceImpl implements SleepService {
                 trendLabels,
                 trendValues
         );
-        return new RecordVO.SleepOverview(records, stats);
     }
 
     private int standardDeviation(List<Integer> values) {
@@ -145,6 +147,20 @@ public class SleepServiceImpl implements SleepService {
         return sleepRecordMapper.findByUserAndRecordDateBetween(userId, today.minusDays(6), today).stream()
                 .mapToInt(record -> record.getDurationMinutes() == null ? 0 : record.getDurationMinutes())
                 .average().orElse(0) / 60.0;
+    }
+
+    @Override
+    public PageResult page(Long userId, int page, int pageSize, LocalDate begin, LocalDate end) {
+        int pageNum = Math.max(page, 1);
+        int size = pageSize < 1 ? 10 : Math.min(pageSize, 100);
+        if (begin != null && end != null && begin.isAfter(end)) {
+            LocalDate temp = begin;
+            begin = end;
+            end = temp;
+        }
+        PageHelper.startPage(pageNum, size);
+        Page<SleepRecord> records = sleepRecordMapper.pageQuery(userId, begin, end);
+        return new PageResult(records.getTotal(), records.getResult());
     }
 
     public void delete(Long userId, Long id) {

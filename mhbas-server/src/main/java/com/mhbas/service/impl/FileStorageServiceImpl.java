@@ -43,6 +43,9 @@ public class FileStorageServiceImpl implements FileStorageService {
         if (contentType == null || !ALLOWED_TYPES.contains(contentType.toLowerCase(Locale.ROOT))) {
             throw new BusinessException("仅支持 JPG、PNG、WEBP 或 GIF 图片");
         }
+        if (!aliOssUtil.isConfigured()) {
+            throw new BusinessException(502, "头像上传暂不可用：OSS 尚未配置");
+        }
 
         String extension = extensionOf(file.getOriginalFilename(), contentType);
         String objectKey = "mhbas/avatars/" + userId + "/" + UUID.randomUUID() + extension;     // 构建对象存储的键

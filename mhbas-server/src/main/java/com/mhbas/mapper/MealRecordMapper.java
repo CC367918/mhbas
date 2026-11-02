@@ -1,5 +1,6 @@
 package com.mhbas.mapper;
 
+import com.github.pagehelper.Page;
 import com.mhbas.entity.MealRecord;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -18,4 +19,8 @@ public interface MealRecordMapper {
     int deleteByIdAndUser(@Param("id") Long id, @Param("userId") Long userId);
 
     MealRecord getMeal(@Param("userId") Long userId, @Param("recordDate") LocalDate recordDate, @Param("mealType") String mealType);
+
+    Page<MealRecord> pageQuery(@Param("userId") Long userId,
+                               @Param("begin") LocalDate begin,
+                               @Param("end") LocalDate end);
 }

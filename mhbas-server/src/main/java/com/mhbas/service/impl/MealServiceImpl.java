@@ -1,10 +1,13 @@
 package com.mhbas.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.mhbas.service.MealService;
 
 import com.mhbas.exception.BusinessException;
 import com.mhbas.constant.HealthConstant;
 import com.mhbas.dto.RecordDTO;
+import com.mhbas.result.PageResult;
 import com.mhbas.vo.RecordVO;
 import com.mhbas.entity.MealRecord;
 import com.mhbas.mapper.MealRecordMapper;
@@ -69,10 +72,9 @@ public class MealServiceImpl implements MealService {
             values.add(daily.getOrDefault(date, 0));
         }
 
-        RecordVO.MealStats stats = new RecordVO.MealStats(
+        return new RecordVO.MealOverview(
                 daily.getOrDefault(today, 0), weekCount, labels, values
         );
-        return new RecordVO.MealOverview(records, stats);
     }
 
     public int todayCount(Long userId) {
@@ -86,6 +88,20 @@ public class MealServiceImpl implements MealService {
             daily.merge(record.getRecordDate(), 1, Integer::sum);
         }
         return daily;
+    }
+
+    @Override
+    public PageResult page(Long userId, int page, int pageSize, LocalDate begin, LocalDate end) {
+        int pageNum = Math.max(page, 1);
+        int size = pageSize < 1 ? 10 : Math.min(pageSize, 100);
+        if (begin != null && end != null && begin.isAfter(end)) {
+            LocalDate temp = begin;
+            begin = end;
+            end = temp;
+        }
+        PageHelper.startPage(pageNum, size);
+        Page<MealRecord> records = mealRecordMapper.pageQuery(userId, begin, end);
+        return new PageResult(records.getTotal(), records.getResult());
     }
 
     public void delete(Long userId, Long id) {

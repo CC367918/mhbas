@@ -1,5 +1,6 @@
 package com.mhbas.mapper;
 
+import com.github.pagehelper.Page;
 import com.mhbas.entity.WaterRecord;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -14,4 +15,8 @@ public interface WaterRecordMapper {
     int insert(WaterRecord record);
 
     int deleteByIdAndUser(@Param("id") Long id, @Param("userId") Long userId);
+
+    Page<WaterRecord> pageQuery(@Param("userId") Long userId,
+                                @Param("begin") LocalDate begin,
+                                @Param("end") LocalDate end);
 }

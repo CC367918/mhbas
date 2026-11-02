@@ -1,18 +1,12 @@
 package com.mhbas.vo;
 
-import com.mhbas.entity.FitnessRecord;
-import com.mhbas.entity.MealRecord;
-import com.mhbas.entity.SleepRecord;
-import com.mhbas.entity.StepRecord;
-import com.mhbas.entity.WaterRecord;
-
 import java.util.List;
 
 public final class RecordVO {
     private RecordVO() {
     }
 
-    public record StepStats(
+    public record StepOverview(
             int todaySteps,
             int weekSteps,
             int averageSteps7,
@@ -25,19 +19,7 @@ public final class RecordVO {
     ) {
     }
 
-    public record StepOverview(List<StepRecord> records, StepStats stats) {
-    }
-
-    /**
-     * 健身界面信息
-     * @param weekCount
-     * @param weekMinutes
-     * @param weekCalories
-     * @param trendLabels
-     * @param trendValues
-     * @param maxTrend
-     */
-    public record FitnessStats(
+    public record FitnessOverview(
             int weekCount,
             int weekMinutes,
             int weekCalories,
@@ -47,10 +29,8 @@ public final class RecordVO {
     ) {
     }
 
-    public record FitnessOverview(List<FitnessRecord> records, FitnessStats stats) {
-    }
     //睡眠界面信息
-    public record SleepStats(
+    public record SleepOverview(
             double averageHours,    //睡眠
             int fluctuationMinutes,  //波动分钟
             String regularity,       //规律性
@@ -60,10 +40,7 @@ public final class RecordVO {
     ) {
     }
 
-    public record SleepOverview(List<SleepRecord> records, SleepStats stats) {
-    }
-
-    public record WaterStats(
+    public record WaterOverview(
             int todayMl,
             int weekMl,
             Integer targetMl,
@@ -73,17 +50,11 @@ public final class RecordVO {
     ) {
     }
 
-    public record WaterOverview(List<WaterRecord> records, WaterStats stats) {
-    }
-
-    public record MealStats(
+    public record MealOverview(
             int todayCount,
             int weekCount,
             List<String> trendLabels,
             List<Integer> trendValues
     ) {
-    }
-
-    public record MealOverview(List<MealRecord> records, MealStats stats) {
     }
 }

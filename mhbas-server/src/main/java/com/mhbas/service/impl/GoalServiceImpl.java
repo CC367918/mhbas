@@ -38,7 +38,7 @@ public class GoalServiceImpl implements GoalService {
         this.stepService = stepService;
     }
 
-    private record CurrentValues(RecordVO.FitnessStats fitness, double sleepHours, int waterMl, int mealCount, int steps) {}
+    private record CurrentValues(RecordVO.FitnessOverview fitness, double sleepHours, int waterMl, int mealCount, int steps) {}
 
     /**
      * 获取用户所有目标的详情，包含进度
@@ -154,7 +154,7 @@ public class GoalServiceImpl implements GoalService {
     }
 
     private CurrentValues currentValues(Long userId) {
-        RecordVO.FitnessStats fitness = fitnessService.overview(userId).stats();
+        RecordVO.FitnessOverview fitness = fitnessService.overview(userId);
         return new CurrentValues(
                 fitness,
                 sleepService.averageHours7(userId),

@@ -4,9 +4,8 @@ import com.mhbas.annotation.OperationLog;
 import com.mhbas.result.Result;
 import com.mhbas.dto.UserDTO;
 import com.mhbas.vo.UserVO;
-import com.mhbas.dto.UserDTO;
-import com.mhbas.vo.UserVO;
 import com.mhbas.service.AuthService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,7 +39,8 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public Result logout() {
+    public Result logout(HttpServletRequest request) {
+        authService.logout(request);
         return Result.success();
     }
 }

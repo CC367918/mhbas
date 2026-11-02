@@ -1,10 +1,13 @@
 package com.mhbas.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.mhbas.service.FitnessService;
 
 import com.mhbas.exception.BusinessException;
 import com.mhbas.constant.HealthConstant;
 import com.mhbas.dto.RecordDTO;
+import com.mhbas.result.PageResult;
 import com.mhbas.vo.RecordVO;
 import com.mhbas.entity.FitnessRecord;
 import com.mhbas.mapper.FitnessRecordMapper;
@@ -93,7 +96,7 @@ public class FitnessServiceImpl implements FitnessService {
                 .mapToDouble(record -> record.getCalories() == null ? 0 : record.getCalories())
                 .sum());
 
-        RecordVO.FitnessStats stats = new RecordVO.FitnessStats(
+        return new RecordVO.FitnessOverview(
                 weekRecords.size(),
                 weekMinutes,
                 weekCalories,
@@ -101,7 +104,6 @@ public class FitnessServiceImpl implements FitnessService {
                 values,
                 values.stream().mapToInt(Integer::intValue).max().orElse(0)
         );
-        return new RecordVO.FitnessOverview(records, stats);
     }
 
     public int todayCount(Long userId) {
@@ -109,6 +111,22 @@ public class FitnessServiceImpl implements FitnessService {
         return fitnessRecordMapper.findByUserAndStartTimeBetween(
                 userId, today.atStartOfDay(), today.plusDays(1).atStartOfDay()
         ).size();
+    }
+
+    @Override
+    public PageResult page(Long userId, int page, int pageSize, LocalDate begin, LocalDate end) {
+        int pageNum = Math.max(page, 1);
+        int size = pageSize < 1 ? 10 : Math.min(pageSize, 100);
+        if (begin != null && end != null && begin.isAfter(end)) {
+            LocalDate temp = begin;
+            begin = end;
+            end = temp;
+        }
+        LocalDateTime beginTime = begin == null ? null : begin.atStartOfDay();
+        LocalDateTime endExclusive = end == null ? null : end.plusDays(1).atStartOfDay();
+        PageHelper.startPage(pageNum, size);
+        Page<FitnessRecord> records = fitnessRecordMapper.pageQuery(userId, beginTime, endExclusive);
+        return new PageResult(records.getTotal(), records.getResult());
     }
 
     public void delete(Long userId, Long id) {

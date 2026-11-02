@@ -2,6 +2,7 @@ package com.mhbas.service;
 
 import com.mhbas.dto.RecordDTO;
 import com.mhbas.entity.MealRecord;
+import com.mhbas.result.PageResult;
 import com.mhbas.vo.RecordVO;
 
 import java.time.LocalDate;
@@ -16,6 +17,8 @@ public interface MealService {
     int todayCount(Long userId);
 
     Map<LocalDate, Integer> dailyMap(List<MealRecord> records);
+
+    PageResult page(Long userId, int page, int pageSize, LocalDate begin, LocalDate end);
 
     void delete(Long userId, Long id);
 }

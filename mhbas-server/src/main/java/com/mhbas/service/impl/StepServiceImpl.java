@@ -1,5 +1,8 @@
 package com.mhbas.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
+import com.mhbas.result.PageResult;
 import com.mhbas.service.StepService;
 
 import com.mhbas.exception.BusinessException;
@@ -31,6 +34,7 @@ public class StepServiceImpl implements StepService {
         this.goalMapper = goalMapper;
     }
 
+    @Override
     public RecordVO.StepOverview overview(Long userId) {
         LocalDate today = LocalDate.now();
         LocalDate from = today.minusDays(29);
@@ -44,12 +48,6 @@ public class StepServiceImpl implements StepService {
             trendLabels.add(date.toString().substring(5));
             trendValues.add(daily.getOrDefault(date, 0));
         }
-
-        /*LocalDate monday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        int weekSteps = 0;
-        for (LocalDate date = monday; !date.isAfter(today); date = date.plusDays(1)) {
-            weekSteps += daily.getOrDefault(date, 0);
-        }*/
 
         Integer goalSteps = goalSteps(userId);
         int sum7 = 0;
@@ -66,7 +64,7 @@ public class StepServiceImpl implements StepService {
         Integer achievementRate = goalSteps == null
                 ? null
                 : Math.min(100, (int) Math.round(todaySteps * 100.0 / goalSteps));
-        RecordVO.StepStats stats = new RecordVO.StepStats(
+        RecordVO.StepOverview stepOverview = new RecordVO.StepOverview(
                 todaySteps,
                 weekSteps(userId),
                 (int) Math.round(sum7 / 7.0),
@@ -77,9 +75,10 @@ public class StepServiceImpl implements StepService {
                 trendLabels,
                 trendValues
         );
-        return new RecordVO.StepOverview(records, stats);
+        return stepOverview;
     }
 
+    @Override
     public Map<LocalDate, Integer> dailyMap(List<StepRecord> records) {
         Map<LocalDate, Integer> daily = new HashMap<>();
         for (StepRecord record : records) {
@@ -88,11 +87,27 @@ public class StepServiceImpl implements StepService {
         return daily;
     }
 
+    @Override
+    public PageResult page(Long userId, int page, int pageSize, LocalDate begin, LocalDate end) {
+        int pageNum = Math.max(page, 1);
+        int size = pageSize < 1 ? 10 : Math.min(pageSize, 100);
+        if (begin != null && end != null && begin.isAfter(end)) {
+            LocalDate temp = begin;
+            begin = end;
+            end = temp;
+        }
+        PageHelper.startPage(pageNum, size);
+        Page<StepRecord> records = stepRecordMapper.pageQuery(userId, begin, end);
+        return new PageResult(records.getTotal(), records.getResult());
+    }
+
+    @Override
     public int todaySteps(Long userId) {
         StepRecord record = stepRecordMapper.findByUserAndDate(userId, LocalDate.now());
         return record == null || record.getSteps() == null ? 0 : record.getSteps();
     }
 
+    @Override
     public int weekSteps(Long userId) {
         LocalDate today = LocalDate.now();
         LocalDate monday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
@@ -101,6 +116,7 @@ public class StepServiceImpl implements StepService {
                 .sum();
     }
 
+    @Override
     public Integer goalSteps(Long userId) {
         Goal goal = goalMapper.findActiveByUserAndType(userId, GoalType.STEPS_DAILY.getCode());
         if (goal == null || goal.getTargetValue() == null || goal.getTargetValue() <= 0) {
@@ -109,6 +125,7 @@ public class StepServiceImpl implements StepService {
         return Math.max(1, (int) Math.round(goal.getTargetValue()));
     }
 
+    @Override
     @Transactional
     public void save(Long userId, RecordDTO.Step request) {
         if (request.recordDate().isAfter(LocalDate.now())) {
@@ -127,6 +144,7 @@ public class StepServiceImpl implements StepService {
         }
     }
 
+    @Override
     public void delete(Long userId, Long id) {
         if (stepRecordMapper.deleteByIdAndUser(id, userId) == 0) {
             throw new BusinessException(404, "步数记录不存在");

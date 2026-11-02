@@ -2,6 +2,7 @@ package com.mhbas.controller;
 
 import com.mhbas.annotation.OperationLog;
 import com.mhbas.context.BaseContext;
+import com.mhbas.result.PageResult;
 import com.mhbas.result.Result;
 import com.mhbas.dto.RecordDTO;
 import com.mhbas.vo.RecordVO;
@@ -13,7 +14,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/water")
@@ -27,6 +31,17 @@ public class WaterController {
     @GetMapping
     public Result<RecordVO.WaterOverview> overview() {
         return Result.success(waterService.overview(BaseContext.requireCurrentId()));
+    }
+
+    @GetMapping("/page")
+    public Result<PageResult> page(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int pageSize,
+            @RequestParam(required = false) LocalDate begin,
+            @RequestParam(required = false) LocalDate end) {
+        return Result.success(waterService.page(
+                BaseContext.requireCurrentId(), page, pageSize, begin, end
+        ));
     }
 
     @PostMapping

@@ -29,4 +29,18 @@
     <delete id="deleteByIdAndUser">
         DELETE FROM step_record WHERE id = #{id} AND user_id = #{userId}
     </delete>
+
+    <select id="pageQuery" resultType="StepRecord">
+        SELECT * FROM step_record
+        <where>
+            user_id = #{userId}
+            <if test="begin != null">
+                AND record_date &gt;= #{begin}
+            </if>
+            <if test="end != null">
+                AND record_date &lt;= #{end}
+            </if>
+        </where>
+        ORDER BY record_date DESC
+    </select>
 </mapper>

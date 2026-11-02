@@ -1,6 +1,6 @@
 package com.mhbas.config;
 
-import com.mhbas.interceptor.JwtInterceptor;
+import com.mhbas.interceptor.LoginInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -8,15 +8,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class WebMvcConfiguration implements WebMvcConfigurer {
-    private final JwtInterceptor jwtInterceptor;
+    private final LoginInterceptor loginInterceptor;
 
-    public WebMvcConfiguration(JwtInterceptor jwtInterceptor) {
-        this.jwtInterceptor = jwtInterceptor;
+    public WebMvcConfiguration(LoginInterceptor loginInterceptor) {
+        this.loginInterceptor = loginInterceptor;
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(jwtInterceptor)
+        registry.addInterceptor(loginInterceptor)
                 .addPathPatterns("/api/**")
                 .excludePathPatterns("/api/auth/**", "/error");
     }

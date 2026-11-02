@@ -25,4 +25,20 @@
           AND record_date = #{recordDate}
           AND meal_type = #{mealType}
     </select>
+
+    <select id="pageQuery" resultType="MealRecord">
+        SELECT * FROM meal_record
+        <where>
+            user_id = #{userId}
+            <if test="begin != null">
+                AND record_date &gt;= #{begin}
+            </if>
+            <if test="end != null">
+                AND record_date &lt;= #{end}
+            </if>
+        </where>
+        ORDER BY record_date DESC,
+                 CASE meal_type WHEN '早餐' THEN 1 WHEN '午餐' THEN 2 ELSE 3 END,
+                 id DESC
+    </select>
 </mapper>

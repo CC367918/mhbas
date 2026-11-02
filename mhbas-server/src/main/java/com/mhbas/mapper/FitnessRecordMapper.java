@@ -1,5 +1,6 @@
 package com.mhbas.mapper;
 
+import com.github.pagehelper.Page;
 import com.mhbas.entity.FitnessRecord;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -14,4 +15,8 @@ public interface FitnessRecordMapper {
     int insert(FitnessRecord record);
 
     int deleteByIdAndUser(@Param("id") Long id, @Param("userId") Long userId);
+
+    Page<FitnessRecord> pageQuery(@Param("userId") Long userId,
+                                  @Param("begin") LocalDateTime begin,
+                                  @Param("endExclusive") LocalDateTime endExclusive);
 }

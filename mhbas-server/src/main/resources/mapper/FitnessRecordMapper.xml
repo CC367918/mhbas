@@ -20,4 +20,18 @@
     <delete id="deleteByIdAndUser">
         DELETE FROM fitness_record WHERE id = #{id} AND user_id = #{userId}
     </delete>
+
+    <select id="pageQuery" resultType="FitnessRecord">
+        SELECT * FROM fitness_record
+        <where>
+            user_id = #{userId}
+            <if test="begin != null">
+                AND start_time &gt;= #{begin}
+            </if>
+            <if test="endExclusive != null">
+                AND start_time &lt; #{endExclusive}
+            </if>
+        </where>
+        ORDER BY start_time DESC, id DESC
+    </select>
 </mapper>

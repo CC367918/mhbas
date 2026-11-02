@@ -16,4 +16,18 @@
     <delete id="deleteByIdAndUser">
         DELETE FROM water_record WHERE id = #{id} AND user_id = #{userId}
     </delete>
+
+    <select id="pageQuery" resultType="WaterRecord">
+        SELECT * FROM water_record
+        <where>
+            user_id = #{userId}
+            <if test="begin != null">
+                AND record_date &gt;= #{begin}
+            </if>
+            <if test="end != null">
+                AND record_date &lt;= #{end}
+            </if>
+        </where>
+        ORDER BY record_date DESC, water_time DESC, id DESC
+    </select>
 </mapper>

@@ -2,8 +2,12 @@
 spring:
   application:
     name: MHBAS
+  config:
+    import:
+      - optional:file:./.env[.properties]
+      - optional:file:../.env[.properties]
   profiles:
-      active: dev
+    active: ${SPRING_PROFILES_ACTIVE:dev}
 
   servlet:
     encoding:
@@ -12,19 +16,9 @@ spring:
     multipart:
       max-file-size: 5MB
       max-request-size: 6MB
-  datasource:
-    url: ${spring.datasource.url}
-    username: ${spring.datasource.username}
-    password: ${spring.datasource.password}
-    driver-class-name: ${spring.datasource.driver-class-name}
-  sql:
-    init:
-      mode: ${spring.sql.init.mode}
-      schema-locations: ${spring.sql.init.schema-locations}
-      continue-on-error: ${spring.sql.init.continue-on-error}
 
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
 
 logging:
   charset:
@@ -37,14 +31,14 @@ mybatis:
   configuration:
     map-underscore-to-camel-case: true
 
-jwt:
-  secret: ${JWT_SECRET:mhbas-local-development-secret-key-change-me-2026}
-  expiration: ${JWT_EXPIRATION:86400000}
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true          # 页码超过最大页自动返回最后一页
+  support-methods-arguments: true
+  params: count=countSql
 
-aliyun:
-  oss:
-    endpoint: ${spring.aliyun.oss.endpoint}
-    access-key-id: ${spring.aliyun.oss.access-key-id}
-    access-key-secret: ${spring.aliyun.oss.access-key-secret}
-    bucket-name: ${spring.aliyun.oss.bucket-name}
-    public-base-url: ${aliyun.oss.public-base-url}
+
+jwt:
+  secretKey: ${JWT_SECRET}
+  expiration: ${JWT_EXPIRATION:86400000}
+  tokenName: Authorization

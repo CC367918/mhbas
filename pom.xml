@@ -30,6 +30,7 @@
         <jjwt.version>0.12.6</jjwt.version>
         <aliyun-oss.version>3.18.1</aliyun-oss.version>
         <commons-math3.version>3.6.1</commons-math3.version>
+        <pagehelper.version>2.1.0</pagehelper.version>
     </properties>
 
     <dependencyManagement>
@@ -75,6 +76,12 @@
                 <artifactId>commons-math3</artifactId>
                 <version>${commons-math3.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.github.pagehelper</groupId>
+                <artifactId>pagehelper-spring-boot-starter</artifactId>
+                <version>${pagehelper.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 

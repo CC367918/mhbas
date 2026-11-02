@@ -21,4 +21,10 @@ public class DashboardController {
     public Result<DashboardVO.Overview> dashboard() {
         return Result.success(dashboardService.dashboard(BaseContext.requireCurrentId()));
     }
+
+    @GetMapping("/weekly-report")
+    public Result<Void> exportWeeklyReport() {
+        // TODO: 周报生成与文件下载还未实现。
+        return Result.success();
+    }
 }

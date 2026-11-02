@@ -1,5 +1,7 @@
 package com.mhbas.mapper;
 
+import com.github.pagehelper.Page;
+import com.mhbas.dto.RecordDTO;
 import com.mhbas.entity.StepRecord;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -18,4 +20,8 @@ public interface StepRecordMapper {
     int updateSteps(@Param("id") Long id, @Param("userId") Long userId, @Param("steps") Integer steps);
 
     int deleteByIdAndUser(@Param("id") Long id, @Param("userId") Long userId);
+
+    Page<StepRecord> pageQuery(@Param("userId") Long userId,
+                               @Param("begin") LocalDate begin,
+                               @Param("end") LocalDate end);
 }
